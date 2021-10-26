@@ -1,0 +1,60 @@
+---
+# This playbook will install mysql and create db user and give permissions.
+- name: Set ansible python interpreter to python3.6
+  set_fact:
+    ansible_python_interpreter: python2.7
+    timeout: 600
+
+- name: Install Mysql package
+  package: name={{ item }} state=installed
+  with_items:
+   - mysql-server
+   - python2.7-mysqldb
+   - python-semanage
+   - mysql-client
+#   - python3.6-dev
+   - libmysqlclient-dev
+#   - python3-pip
+   - python-pymysql
+   - python-pip
+  register: package_db_install
+
+- name: Install Mysql PIP
+#  shell: pip install MySQL-python PyMySQL==0.7.11
+#  when: package_db_install.changed
+  pip: name={{ item }}
+  with_items:
+     - MySQL-python
+     - PyMySQL==0.7.11
+#Below parameter is for RHEL
+#- name: Configure SELinux to start mysql on any port
+#  seboolean: name=mysql_connect_any state=true persistent=yes
+#  when: sestatus.rc != 0
+
+- name: Create Mysql configuration file
+  template: src=my.cnf.j2 dest=/etc/my.cnf
+  notify:
+  - restart mysql
+
+- name: Start Mysql Service
+  service: name=mysql state=started enabled=yes
+
+- name: Create Application Database
+  mysql_db:
+    name: "{{ dbname }}"
+    state: present
+    config_file: "/etc/my.cnf"
+    login_user: "root"
+    login_password: "REDACTED"
+  register: create_db
+  ignore_errors: yes
+
+- name: Create Application DB User
+  mysql_user:
+    name: "{{ dbuser }}"
+    password: "{{ upassword }}"
+    config_file: "/etc/my.cnf"
+    host: '%'
+    state: present
+    login_user: root
+  when: create_db.changed

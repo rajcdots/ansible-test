@@ -1,0 +1,4 @@
+mysql:
+  root_db_password: REDACTED
+  hosts:
+    - '%'

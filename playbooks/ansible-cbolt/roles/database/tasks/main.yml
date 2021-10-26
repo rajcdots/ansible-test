@@ -1,0 +1,2 @@
+- name: Check platform dependent variables
+  include_tasks: "{{platform_os}}.yaml"

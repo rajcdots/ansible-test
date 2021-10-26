@@ -1,0 +1,16 @@
+driftfile /var/lib/ntp/drift
+
+restrict 127.0.0.1
+restrict -6 ::1
+
+pool 0.ubuntu.pool.ntp.org iburst
+pool 1.ubuntu.pool.ntp.org iburst
+pool 2.ubuntu.pool.ntp.org iburst
+pool 3.ubuntu.pool.ntp.org iburst
+
+# Use Ubuntu's ntp server as a fallback.
+pool ntp.ubuntu.com
+
+includefile /etc/ntp/crypto/pw
+
+keys /etc/ntp/keys

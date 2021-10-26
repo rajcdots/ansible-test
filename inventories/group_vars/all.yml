@@ -1,0 +1,21 @@
+---
+platform_os: centos
+ansible_connection: 'ssh'
+ansible_python_interpreter: '/usr/bin/python2.7'
+ansible_become: True
+host_key_checking: false
+dbservers: "{{lampservers}}"
+environment_name:
+httpd_port: 80
+ntpserver: 192.168.1.2
+repository: https://github.com/bennojoy/mywebapp.git
+
+# full path to the ssh public key file
+ssh_public_key_file:
+
+ssh_key:
+  name: "ansible_{{environment_name}}"
+  value: "{{ lookup('file', ssh_public_key_file) }}"
+
+retry_count: 5
+retry_stagger: 5

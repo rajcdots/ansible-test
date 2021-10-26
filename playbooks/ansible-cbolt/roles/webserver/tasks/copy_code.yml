@@ -1,0 +1,44 @@
+---
+# These tasks are responsible for copying the latest dev/production code from
+- name: check folder exist
+  stat: 
+   path: "{{ item }}"
+  with_items:
+    - /var/www/html
+    - /var/www/html-2
+  register: html_stat
+
+- name: remove old folder
+  file:
+   state: absent
+   path: "{{ item }}"
+  with_items:
+    - /var/www/html
+    - /var/www/html-2
+
+
+# the version control system.
+#- name: move /var/www/html
+#  file:
+#  path: "{{ item }}"
+#   with_item: 
+#    - /var/www/html
+#    - /var/www/html-2 
+#  state: absent
+   #  when: ( html_stat.stat.exists and html_stat.path is "{{ item }}"
+
+  #  when:
+  #  - not item | skipped
+  #  - item.stat.exists == false
+
+- name:  create folder
+  file: 
+   path: /var/www/html
+   state: directory
+   mode: '0755'
+
+- name: Copy the code from repository
+  git: repo={{ repository }} dest=/var/www/html
+
+- name: Creates the index.php file
+  template: src=index.php.j2 dest=/var/www/html/index.php

@@ -1,0 +1,9 @@
+[lampservers]
+10.0.1.7
+#10.0.2.15
+[dbservers]
+10.0.1.7
+[all:children]
+#webservers
+#dbservers
+lampservers

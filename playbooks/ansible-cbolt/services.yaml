@@ -1,0 +1,45 @@
+---
+# This playbook deploys the whole application stack in this site.
+- name: apply common configuration to all nodes
+  hosts: all
+  #  user: ubuntu
+  #  vars: 
+  #password: MiMdiD6hgOeoE
+  vars:
+    ansible_host_key_checking: False
+    ansible_ssh_host_key_checking: False
+    ansible_paramiko_host_key_checking: False
+    host_key_checking: False
+    ssh_host_key_checking: False
+    paramiko_host_key_checking: False
+  roles:
+    - defaults
+      #  environment:
+      # http_proxy: "http://172.22.6.45:80"
+      # https_proxy: "http://172.22.6.45:80"
+
+- name: configure and deploy the webservers and application code
+  hosts: lampservers
+  vars_files:
+   - "/home/ansible/cdcp-demo/inventories/group_vars/all.yml" 
+   - "/home/ansible/cdcp-demo/inventories/group_vars/dbservers.yml"  
+
+  roles:
+    - webserver
+  environment:
+      #http_proxy: "http://172.22.6.45:80"
+      # https_proxy: "http://172.22.6.45:80"
+
+- name: deploy MySQL and configure the databases
+  hosts: lampservers
+  vars_files:
+   - "/home/ansible/cdcp-demo/inventories/group_vars/all.yml" 
+   - "/home/ansible/cdcp-demo/inventories/group_vars/dbservers.yml"  
+
+  roles:
+    - database
+  environment:
+          #http_proxy: "http://172.22.6.45:80"
+          # https_proxy: "http://172.22.6.45:80"
+    ansible_python_interpreter: python2.7
+    timeout: 300
