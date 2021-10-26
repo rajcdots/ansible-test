@@ -1,0 +1,11 @@
+---
+
+- name: Create a new database with name 'bobdata'
+  hosts: all
+  tasks:
+   - name: db install
+     mysql_db:
+      name: bobdata
+      state: present
+      login_user: root
+      config_file: /etc/my.cnf
